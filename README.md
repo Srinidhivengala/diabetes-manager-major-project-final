@@ -22,7 +22,3 @@ A local-first Flask web application for:
 - Role-based authentication
 - CSV/PDF export
 
----
-
-## 📁 Project Structure
-
