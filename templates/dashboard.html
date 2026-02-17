@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Diabetes Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <h2 class="logo">Diabetes Manager</h2>
+        <ul>
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Glucose</a></li>
+            <li><a href="#">Reminders</a></li>
+            <li><a href="#">Reports</a></li>
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        </ul>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+        <!-- HEADER -->
+        <header class="dashboard-header">
+            <div>
+                <h1>Dashboard</h1>
+                <p>Welcome back to your health overview.</p>
+            </div>
+
+            <a href="#" class="add-btn">+ Add Reading</a>
+        </header>
+
+        <!-- STATS CARDS -->
+        <div class="stats-grid">
+
+            <div class="card">
+                <h3>Total Readings</h3>
+                <p>{{ total_readings or 0 }}</p>
+            </div>
+
+            <div class="card">
+                <h3>Average Glucose</h3>
+                <p>{{ avg_glucose or 0 }} mg/dL</p>
+            </div>
+
+            <div class="card">
+                <h3>Active Reminders</h3>
+                <p>{{ total_reminders or 0 }}</p>
+            </div>
+
+        </div>
+
+        <!-- CHART SECTION -->
+        <div class="chart-section">
+
+            <div class="chart-box">
+                <h3>Glucose Overview</h3>
+                <canvas id="glucoseChart"></canvas>
+            </div>
+
+            <!-- QUICK TIPS -->
+            <div class="tips-box">
+                <h3>Quick Tips</h3>
+
+                <div class="tip blue">
+                    <strong>Hydration matters!</strong>
+                    <p>Drinking water helps flush out excess sugar.</p>
+                </div>
+
+                <div class="tip green">
+                    <strong>Post-meal walks</strong>
+                    <p>A 10-minute walk can lower blood sugar spikes.</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('glucoseChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ chart_labels | tojson }},
+            datasets: [{
+                label: 'Glucose Level',
+                data: {{ chart_values | tojson }},
+                borderColor: '#2563eb',
+                backgroundColor: 'rgba(37,99,235,0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        }
+    });
+</script>
+
+</body>
+</html>

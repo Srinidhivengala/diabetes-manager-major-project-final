@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-icon">
+        <i class="bi bi-shield-lock"></i>
+      </div>
+      <h3>Verify Your Email</h3>
+      <p>Enter the one-time password (OTP) we sent to <strong>{{ email }}</strong></p>
+    </div>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      <input type="hidden" name="email" value="{{ email }}" />
+      <div class="mb-3">
+        <label class="form-label">
+          <i class="bi bi-key me-2"></i>One-Time Password
+        </label>
+        <input class="form-control" type="text" name="otp" placeholder="Enter 6-digit OTP" pattern="\d{4,8}" required />
+      </div>
+      <button class="btn btn-primary w-100" type="submit">
+        <i class="bi bi-check-circle me-2"></i>Verify &amp; Complete Registration
+      </button>
+    </form>
+    <div class="auth-link">
+      <p class="mb-0">Didn't get the code? <a href="{{ url_for('register', email=email) }}">Resend OTP</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

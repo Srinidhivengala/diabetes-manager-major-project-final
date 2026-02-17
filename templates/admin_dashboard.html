@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">
+    <i class="bi bi-shield-check me-2"></i>Admin Dashboard
+  </h2>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+  <div class="col-md-3 mb-3">
+    <div class="card text-white bg-primary">
+      <div class="card-body">
+        <h5 class="card-title"><i class="bi bi-people me-2"></i>Total Users</h5>
+        <h2 class="mb-0">{{ total_users }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-3">
+    <div class="card text-white bg-success">
+      <div class="card-body">
+        <h5 class="card-title"><i class="bi bi-person me-2"></i>Patients</h5>
+        <h2 class="mb-0">{{ total_patients }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-3">
+    <div class="card text-white bg-info">
+      <div class="card-body">
+        <h5 class="card-title"><i class="bi bi-heart-pulse me-2"></i>Clinicians</h5>
+        <h2 class="mb-0">{{ total_clinicians }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 mb-3">
+    <div class="card text-white bg-warning">
+      <div class="card-body">
+        <h5 class="card-title"><i class="bi bi-shield-check me-2"></i>Admins</h5>
+        <h2 class="mb-0">{{ total_admins }}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Clinician Form -->
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <i class="bi bi-person-plus me-2"></i>Create New Clinician
+      </div>
+      <div class="card-body">
+        <form method="post" action="{{ url_for('create_clinician') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+          <div class="row">
+            <div class="col-md-3 mb-3">
+              <label class="form-label">First Name</label>
+              <input class="form-control" type="text" name="first_name" placeholder="First Name" />
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label">Last Name</label>
+              <input class="form-control" type="text" name="last_name" placeholder="Last Name" />
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label">Email <span class="text-danger">*</span></label>
+              <input class="form-control" type="email" name="email" placeholder="Email" required />
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label">Password <span class="text-danger">*</span></label>
+              <input class="form-control" type="password" name="password" placeholder="Password" required minlength="6" />
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">
+            <i class="bi bi-person-check me-2"></i>Create Clinician
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Users Management -->
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <i class="bi bi-table me-2"></i>All Users
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% set csrf_tok = csrf_token() %}
+              {% for user in users %}
+              <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                  <span class="badge text-bg-{{ 'danger' if user.role=='admin' else 'info' if user.role=='clinician' else 'success' }}">
+                    {{ user.role|title }}
+                  </span>
+                </td>
+                <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>
+                  {% if user.id != current_user.id %}
+                  <form method="post" action="{{ url_for('delete_user', user_id=user.id) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_tok }}"/>
+                    <button class="btn btn-sm btn-danger" type="submit">
+                      <i class="bi bi-trash me-1"></i>Delete
+                    </button>
+                  </form>
+                  {% else %}
+                  <span class="text-muted">Current User</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Audit Logs -->
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <i class="bi bi-journal-text me-2"></i>Audit Logs (Recent 100)
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Timestamp</th>
+                <th>User</th>
+                <th>Action</th>
+                <th>Details</th>
+                <th>IP Address</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for log in audit_logs %}
+              <tr>
+                <td>{{ log.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>
+                  {% if log.user %}
+                    {{ log.user.email }}
+                  {% else %}
+                    <span class="text-muted">System</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <span class="badge text-bg-secondary">{{ log.action }}</span>
+                </td>
+                <td><small>{{ log.details or '-' }}</small></td>
+                <td><small class="text-muted">{{ log.ip_address or '-' }}</small></td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="5" class="text-center text-muted py-4">
+                  <i class="bi bi-inbox me-2"></i>No audit logs found.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
