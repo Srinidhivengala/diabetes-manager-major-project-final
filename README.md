@@ -1,11 +1,28 @@
-C:\Users\INDIAN\Downloads\mp (2)>git push -u origin main
-Enumerating objects: 65, done.
-Counting objects: 100% (65/65), done.
-Delta compression using up to 12 threads
-Compressing objects: 100% (62/62), done.
-Writing objects: 100% (65/65), 45.98 KiB | 826.00 KiB/s, done.
-Total 65 (delta 15), reused 0 (delta 0), pack-reused 0 (from 0)
-remote: Resolving deltas: 100% (15/15), done.
-To https://github.com/Srinidhivengala/diabetes-manager-major-project-final.git
- * [new branch]      main -> main
-branch 'main' set up to track 'origin/main'.
+# Diabetes Prediction System
+
+## 📌 Project Description
+This project predicts whether a person has diabetes using Machine Learning techniques.
+
+## 🚀 Features
+- Diabetes Risk Prediction
+- SHAP Explainability Graph
+- User-friendly Interface
+- Real-time Prediction
+
+## 🛠️ Technologies Used
+- Python
+- Flask
+- Scikit-learn
+- HTML, CSS, JavaScript
+
+## ▶️ How to Run
+pip install -r requirements.txt  
+python app.py
+
+## 📊 Models Used
+- Random Forest Classifier
+
+## 📈 Output
+- Prediction (Diabetes / No Diabetes)
+- Risk Score
+- Feature Importance Graph
